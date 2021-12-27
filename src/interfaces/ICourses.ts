@@ -3,4 +3,5 @@ export interface ICourses {
   description: string;
   isActive: boolean;
   subjectIds: Array<string>;
+  viewCount: number;
 }

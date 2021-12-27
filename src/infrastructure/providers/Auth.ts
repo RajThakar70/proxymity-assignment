@@ -1,8 +1,8 @@
 import User from '../../models/user.model';
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { ServerResponse } from 'http';
 import Locals from './Locals';
 import { errorBuilder } from '../../utils/builders';
+import { INSTRUCTORS, STUDENTS } from '../../utils/constants';
 
 export class Auth {
   public static verifyUserNamePassword(fastifyServer: FastifyInstance) {
@@ -20,8 +20,13 @@ export class Auth {
     return async function (request: FastifyRequest, reply: FastifyReply, done) {
       console.log(
         '‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡ VALIDATION: JWT ‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡‡'
-        );
-        console.log("🚀 ~ file: Auth.ts ~ line 24 ~ Auth ~ request?.headers", request?.headers)
+      );
+
+      console.log(
+        '🚀 ~ file: Auth.ts ~ line 24 ~ Auth ~ request?.headers',
+        request?.headers
+      );
+      
       const authToken = request?.headers?.authorization?.split(' ')[1];
       const JWT = fastifyServer.jwt;
 
@@ -42,7 +47,7 @@ export class Auth {
           reply.code(401).send({ error: 'invalid token' });
         }
 
-        if(currentTimeStamp > exp) {
+        if (currentTimeStamp > exp) {
           reply.code(401).send({ error: 'token expired' });
         }
 
@@ -60,27 +65,24 @@ export class Auth {
   }
 
   public static canUserAccess(accessPermission) {
-    return async (
-      request: FastifyRequest,
-      response: FastifyReply,
-    ) => {
+    return async (request: FastifyRequest, response: FastifyReply) => {
       try {
-        const { permission = [] } = request.userDetails;
-        console.log("🚀 ~ file: Auth.ts ~ line 67 ~ Auth ~ canUserAccess ~ request.userDetails", request.userDetails);
-        const hasPermission = accessPermission.reduce((finalPermission, currentPermission) => {
-          if(permission.indexOf(currentPermission) !== -1){
-            return finalPermission || true;
-          } else {
-            return finalPermission || false;
-          }
-        }, false);
+        const { isInstructor } = request.userDetails;
 
-        if(hasPermission){
+        console.log(
+          '🚀 ~ file: Auth.ts ~ line 67 ~ Auth ~ canUserAccess ~ request.userDetails',
+          request.userDetails
+        );
+
+        if (accessPermission.indexOf(INSTRUCTORS) !== -1 && isInstructor) {
           return;
         }
 
-        throw new Error("Permission denied!")
-        
+        if (accessPermission.indexOf(STUDENTS) !== -1 && !isInstructor) {
+          return;
+        }
+
+        throw new Error('Permission denied!');
       } catch (error) {
         response.code(403);
         response.send(errorBuilder(error.message));

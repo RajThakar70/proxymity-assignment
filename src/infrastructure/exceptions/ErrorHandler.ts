@@ -37,7 +37,7 @@ class ErrorHandler {
           error
         );
         if (error.validation) {
-          rep.status(422).send(error);
+          rep.status(422).send(errorBuilder(error));
         }
 
         if (error.name === 'JsonWebTokenError') {

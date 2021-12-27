@@ -11,8 +11,9 @@ const CourseSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     description: { type: String, default: '' },
-    courseIds: { type: Array, default: [], required: true },
-    isActive: { type: Boolean, required: true }
+    subjectIds: { type: Array, default: [], required: true },
+    isActive: { type: Boolean, required: true },
+    viewCount: { type: Number, required: true }
   },
   {
     timestamps: true,

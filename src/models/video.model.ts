@@ -14,6 +14,7 @@ const VideoSchema = new mongoose.Schema(
     lessonIds: { type: Array, default: [], required: true },
     tagIds: { type: Array, default: [], required: true },
     link: { type: String, required: true },
+    viewCount: { type: Number, required: true },
   },
   {
     timestamps: true,

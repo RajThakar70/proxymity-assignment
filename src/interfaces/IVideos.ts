@@ -4,4 +4,5 @@ export interface IVideos {
   lessonIds: Array<string>;
   tagIds: Array<string>;
   link: string;
+  viewCount: number;
 }
